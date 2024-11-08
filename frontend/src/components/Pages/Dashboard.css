@@ -1,0 +1,137 @@
+/* Main container and overlay styling */
+.dashboard-container {
+    position: relative;
+    background-image: url('../Clothing/soccer-t-shirt-changing-room.jpg'); /* Update to correct path */
+    background-size: cover;
+    background-position: center;
+    height: calc(100vh - 64px); /* Adjust for Navbar height */
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    color: white;
+  }
+  
+  .dashboard-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to left, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0) 50%);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-right: 40px;
+  }
+  
+  .dashboard-content {
+    position: relative;
+    z-index: 2;
+    text-align: right;
+    max-width: 600px;
+  }
+  
+  /* Title and subtitle with glow effect */
+  .dashboard-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    line-height: 1.2;
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+  
+  .dashboard-subtitle {
+    font-size: 1.25rem;
+    font-style: italic;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    opacity: 0.8;
+  }
+  
+  /* Glowing animation */
+  @keyframes glow {
+    0% {
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.6);
+    }
+    to {
+      text-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 30px rgba(255, 255, 255, 0.8);
+    }
+  }
+  
+  /* Custom animated button */
+  .button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+    padding-left: 30px; /* Adds padding on the left */
+  }
+  .cta {
+    display: flex;
+    padding: 11px 33px;
+    text-decoration: none;
+    font-size: 25px;
+    color: white;
+    background: #6225e6;
+    transition: 1s;
+    box-shadow: 6px 6px 0 black;
+    transform: skewX(-15deg);
+    border: none;
+    cursor: pointer;
+  }
+  
+  .cta:hover {
+    transition: 0.5s;
+    box-shadow: 10px 10px 0 #fbc638;
+  }
+  
+  .cta .second {
+    transition: 0.5s;
+    margin-right: 0px;
+  }
+  
+  .cta:hover .second {
+    transition: 0.5s;
+    margin-right: 45px;
+  }
+  
+  .span {
+    transform: skewX(15deg);
+  }
+  
+  .second {
+    width: 20px;
+    margin-left: 30px;
+    position: relative;
+    top: 12%;
+  }
+  
+  /* Arrow animation */
+  .one {
+    transition: 0.4s;
+    transform: translateX(-60%);
+  }
+  
+  .two {
+    transition: 0.5s;
+    transform: translateX(-30%);
+  }
+  
+  .cta:hover .three {
+    animation: color_anim 1s infinite 0.2s;
+  }
+  
+  .cta:hover .one {
+    transform: translateX(0%);
+    animation: color_anim 1s infinite 0.6s;
+  }
+  
+  .cta:hover .two {
+    transform: translateX(0%);
+    animation: color_anim 1s infinite 0.4s;
+  }
+  
+  @keyframes color_anim {
+    0% { fill: white; }
+    50% { fill: #fbc638; }
+    100% { fill: white; }
+  }

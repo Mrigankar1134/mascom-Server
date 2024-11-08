@@ -1,0 +1,24 @@
+{
+  "files": {
+    "main.css": "/static/css/main.93fc4f43.css",
+    "main.js": "/static/js/main.e1f05af7.js",
+    "static/js/511.f442c2c4.chunk.js": "/static/js/511.f442c2c4.chunk.js",
+    "static/media/soccer-t-shirt-changing-room.jpg": "/static/media/soccer-t-shirt-changing-room.0a8d79b1ee745d1ae6bf.jpg",
+    "static/media/noimage.jpg": "/static/media/noimage.6dc5ec74aab086d271b4.jpg",
+    "static/media/qr5.jpg": "/static/media/qr5.a575757f3e11fcba3d30.jpg",
+    "static/media/mascom_white.png": "/static/media/mascom_white.f164691702c2ba9c11cc.png",
+    "static/media/qr2.jpg": "/static/media/qr2.bc9eb96eab5896984b84.jpg",
+    "static/media/qr1.jpeg": "/static/media/qr1.f51c3b91b2727d3005a2.jpeg",
+    "static/media/mascom_black.png": "/static/media/mascom_black.d2d0c370366d7ad957ad.png",
+    "static/media/qr4.jpg": "/static/media/qr4.97e1af3b0aed78becf94.jpg",
+    "static/media/qr6.jpg": "/static/media/qr6.a904a47a4eb408d3f2bf.jpg",
+    "index.html": "/index.html",
+    "main.93fc4f43.css.map": "/static/css/main.93fc4f43.css.map",
+    "main.e1f05af7.js.map": "/static/js/main.e1f05af7.js.map",
+    "511.f442c2c4.chunk.js.map": "/static/js/511.f442c2c4.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.93fc4f43.css",
+    "static/js/main.e1f05af7.js"
+  ]
+}
