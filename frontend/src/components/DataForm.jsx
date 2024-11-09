@@ -20,7 +20,7 @@ const validationSchemaSignUp = Yup.object({
   Roll_Number: Yup.string()
     .matches(
       /^(MBA\/09\/\d{3}|MBA\/BA03\/\d{3}|MBA\/HR03\/\d{3}|MBA\/10\/\d{3}|MBA\/BA04\/\d{3}|MBA\/HR04\/\d{3}|MSDSM\/01\/\d{3}|Not Applicable)$/,
-      'Roll number must match specified formats'
+      'Roll number must match MBA/___/___ formats'
     )
     .default('Not Applicable'),
   Hostel: Yup.string()

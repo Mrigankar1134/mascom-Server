@@ -25,7 +25,7 @@ const CardComponent = ({ p_id, p_img, p_name, p_price, size_available, color_ava
 
     // Fetch sizes if available
     if (size_available) {
-      axios.get(`http://localhost:6969/api/admin/products/${p_id}/sizes`, {
+      axios.get(`${process.env.REACT_APP_API_URL}/api/admin/products/${p_id}/sizes`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
@@ -41,7 +41,7 @@ const CardComponent = ({ p_id, p_img, p_name, p_price, size_available, color_ava
 
     // Fetch colors if available
     if (color_available) {
-      axios.get(`http://localhost:6969/api/admin/products/${p_id}/colors`, {
+      axios.get(`${process.env.REACT_APP_API_URL}/api/admin/products/${p_id}/colors`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {

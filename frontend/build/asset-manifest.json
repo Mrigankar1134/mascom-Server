@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.93fc4f43.css",
-    "main.js": "/static/js/main.e1f05af7.js",
+    "main.js": "/static/js/main.ca0d4d9a.js",
     "static/js/511.f442c2c4.chunk.js": "/static/js/511.f442c2c4.chunk.js",
     "static/media/soccer-t-shirt-changing-room.jpg": "/static/media/soccer-t-shirt-changing-room.0a8d79b1ee745d1ae6bf.jpg",
     "static/media/noimage.jpg": "/static/media/noimage.6dc5ec74aab086d271b4.jpg",
@@ -14,11 +14,11 @@
     "static/media/qr6.jpg": "/static/media/qr6.a904a47a4eb408d3f2bf.jpg",
     "index.html": "/index.html",
     "main.93fc4f43.css.map": "/static/css/main.93fc4f43.css.map",
-    "main.e1f05af7.js.map": "/static/js/main.e1f05af7.js.map",
+    "main.ca0d4d9a.js.map": "/static/js/main.ca0d4d9a.js.map",
     "511.f442c2c4.chunk.js.map": "/static/js/511.f442c2c4.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.93fc4f43.css",
-    "static/js/main.e1f05af7.js"
+    "static/js/main.ca0d4d9a.js"
   ]
 }
