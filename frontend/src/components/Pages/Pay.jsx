@@ -14,7 +14,8 @@ const validationSchema = Yup.object({
 
 const Pay = () => {
     const [qr, setQr] = useState(0);
-    const qrs = [require('../qr5.jpg'), require('../qr1.jpeg'), require('../qr4.jpg'), require('../qr2.jpg'), require('../qr6.jpg')];
+    const qrs = [require('../qr2.jpg'), require('../qr3.jpg'), require('../qr1.jpeg'), require('../qr5.jpg'), require('../qr4.jpg'), require('../qr6.jpg')];
+    const qrNames = ["Sanat", "Venkat", "Pragya", "Unnati", "Mrigankar", "Suraj"]; // Names corresponding to the QR codes
     const [file, setFile] = useState(null);
     const [renamedFile, setRenamedFile] = useState('');
     const [error, setError] = useState('');
@@ -113,9 +114,9 @@ const Pay = () => {
         const orderData = {
             total_price: total_price,
             transaction_id: values.transactionId,
-            payment_status: 'completed',
             order_items: order_items,
-            screenshot_url: screenshotUrl
+            screenshot_url: screenshotUrl,
+            paid_to: qrNames[qr] // Add QR name to the payload
         };
     
         try {
@@ -129,7 +130,6 @@ const Pay = () => {
                 localStorage.setItem('orderConfirmed', 'true');
                 localStorage.removeItem("cart");
                     navigate('/purchase', { replace: true });
-                    localStorage.getItem('orderConfirmed');
             }
         } catch (error) {
             console.error('Error placing order:', error);
@@ -160,11 +160,12 @@ const Pay = () => {
                     <FormControl variant='filled' fullWidth>
                         <InputLabel>Pay To (Select a QR from the dropdown)</InputLabel>
                         <Select name='Pay To' value={qr} onChange={handleQr}>
-                            <MenuItem value={0}>Harsh</MenuItem>
-                            <MenuItem value={1}>Ruthvik</MenuItem>
-                            <MenuItem value={2}>Utsav</MenuItem>
-                            <MenuItem value={3}>Hemen</MenuItem>
-                            <MenuItem value={4}>Ritesh</MenuItem>
+                            <MenuItem value={0}>Sanat</MenuItem>
+                            <MenuItem value={1}>Venkat</MenuItem>
+                            <MenuItem value={2}>Pragya</MenuItem>
+                            <MenuItem value={3}>Unnati</MenuItem>
+                            <MenuItem value={4}>Mrigankar</MenuItem>
+                            <MenuItem value={5}>Suraj</MenuItem>
                         </Select>
                     </FormControl>
                     <img alt='QR Code' style={{ width: "100%", height: 'auto' }} src={qrs[qr]} />

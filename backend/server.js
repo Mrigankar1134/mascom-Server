@@ -243,6 +243,81 @@ app.get('/api/user/orders', authenticateToken, async (req, res) => {
   }
 });
 
+app.get('/api/admin/my-payments', authenticateToken, async (req, res) => {
+  const adminId = req.query.adminId; // Get the admin ID from query params
+
+  // Map admin IDs to their names
+  const adminMap = {
+    6: 'Mrigankar',
+    14: 'Venkat',
+    15: 'Unnati',
+    16: 'Pragya',
+    17: 'Sanat',
+    18: 'Suraj',
+  };
+
+  const paidToName = adminMap[adminId];
+  if (!paidToName) {
+    return res.status(403).json({ error: 'Unauthorized access' });
+  }
+
+  try {
+    const [results] = await db.query(
+      `SELECT o.id, o.total_price, o.screenshot_url, o.transaction_id, o.payment_status, u.name AS buyer_name 
+       FROM orders o
+       JOIN users u ON o.user_id = u.id
+       WHERE o.paid_to = ? AND o.payment_status IN ('Verification Pending', 'Failed')`,
+      [paidToName]
+    );
+
+    res.status(200).json(results);
+  } catch (error) {
+    console.error('Error fetching payments:', error);
+    res.status(500).json({ error: 'Failed to fetch payments' });
+  }
+});
+
+app.post('/api/admin/verify-payment', authenticateToken, async (req, res) => {
+  const { orderId } = req.body;
+
+  try {
+    // Update payment status to Completed
+    const [result] = await db.query(
+      'UPDATE orders SET payment_status = ? WHERE id = ?',
+      ['Successful', orderId]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    res.status(200).json({ message: 'Payment verified successfully' });
+  } catch (error) {
+    console.error('Error verifying payment:', error);
+    res.status(500).json({ message: 'Failed to verify payment' });
+  }
+});
+
+app.post('/api/admin/decline-payment', authenticateToken, async (req, res) => {
+  const { orderId } = req.body;
+
+  try {
+    const [result] = await db.query(
+      'UPDATE orders SET payment_status = ? WHERE id = ?',
+      ['Failed', orderId]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    res.status(200).json({ message: 'Payment declined successfully' });
+  } catch (error) {
+    console.error('Error declining payment:', error);
+    res.status(500).json({ message: 'Failed to decline payment' });
+  }
+});
+
 // Endpoint to update the size of an order item
 app.put('/api/order/:orderId/item/:itemId', authenticateToken, async (req, res) => {
   const { orderId, itemId } = req.params;
@@ -512,46 +587,42 @@ app.get('/api/admin/products-with-images', authenticateToken, async (req, res) =
 });
 
 app.post('/api/order', authenticateToken, async (req, res) => {
-  const { total_price, transaction_id, payment_status, order_items, screenshot_url } = req.body;
+  const { total_price, transaction_id, order_items, screenshot_url, paid_to } = req.body;
   const userId = req.user.id;
 
   try {
-    const [orderResult] = await db.query(
-      'INSERT INTO orders (user_id, total_price, transaction_id, payment_status, screenshot_url) VALUES (?, ?, ?, ?, ?)',
-      [userId, total_price, transaction_id, payment_status, screenshot_url]
-    );
-
-    const orderId = orderResult.insertId;
-
-    // Insert each item in the order into order_items table
-    await Promise.all(order_items.map(async (item) => {
-      const { product_id, quantity, size, color, price, custom_name } = item;
-    
-      let sizeRow = null;
-      let colorRow = null;
-    
-      // Check and fetch size id
-      if (size) {
-        const [sizeResult] = await db.query('SELECT id FROM sizes WHERE size = ?', [size]);
-        sizeRow = sizeResult && sizeResult[0] ? sizeResult[0] : null;
-      }
-    
-      // Check and fetch color id
-      if (color) {
-        const [colorResult] = await db.query('SELECT id FROM colors WHERE color = ?', [color]);
-        colorRow = colorResult && colorResult[0] ? colorResult[0] : null;
-      }
-    
-      await db.query(
-        'INSERT INTO order_items (order_id, product_id, quantity, size_id, color_id, custom_name, price) VALUES (?, ?, ?, ?, ?, ?, ?)',
-        [orderId, product_id, quantity, sizeRow ? sizeRow.id : null, colorRow ? colorRow.id : null, custom_name, price]
+      const [orderResult] = await db.query(
+          'INSERT INTO orders (user_id, total_price, transaction_id, screenshot_url, paid_to) VALUES (?, ?, ?, ?, ?)',
+          [userId, total_price, transaction_id, screenshot_url, paid_to]
       );
-    }));
 
-    res.status(201).json({ message: 'Order created successfully', orderId });
+      const orderId = orderResult.insertId;
+
+      await Promise.all(order_items.map(async (item) => {
+          const { product_id, quantity, size, color, price, custom_name } = item;
+          let sizeRow = null;
+          let colorRow = null;
+
+          if (size) {
+              const [sizeResult] = await db.query('SELECT id FROM sizes WHERE size = ?', [size]);
+              sizeRow = sizeResult && sizeResult[0] ? sizeResult[0] : null;
+          }
+
+          if (color) {
+              const [colorResult] = await db.query('SELECT id FROM colors WHERE color = ?', [color]);
+              colorRow = colorResult && colorResult[0] ? colorResult[0] : null;
+          }
+
+          await db.query(
+              'INSERT INTO order_items (order_id, product_id, quantity, size_id, color_id, custom_name, price) VALUES (?, ?, ?, ?, ?, ?, ?)',
+              [orderId, product_id, quantity, sizeRow ? sizeRow.id : null, colorRow ? colorRow.id : null, custom_name, price]
+          );
+      }));
+
+      res.status(201).json({ message: 'Order created successfully', orderId });
   } catch (error) {
-    console.error('Error creating order:', error);
-    res.status(500).json({ error: 'Failed to create order' });
+      console.error('Error creating order:', error);
+      res.status(500).json({ error: 'Failed to create order' });
   }
 });
 

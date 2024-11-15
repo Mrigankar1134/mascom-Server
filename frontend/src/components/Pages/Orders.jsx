@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Button, Select, MenuItem, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Collapse, Fab, Snackbar, Alert } from '@mui/material';
+import { Box, Typography, Button, Select, MenuItem, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Collapse, Fab, Snackbar, Alert, useMediaQuery } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../Navbar';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
@@ -15,11 +15,10 @@ const Orders = () => {
     const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
     const navigate = useNavigate();
+    const isMobile = useMediaQuery('(max-width:600px)'); // Detect mobile screen size
 
-    // Define the desired order of sizes
     const sizeOrder = ['2XS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL', 'XXXXL'];
 
-    // Function to sort sizes based on predefined order
     const sortSizes = (sizes) => {
         return sizes.sort((a, b) => {
             return sizeOrder.indexOf(a) - sizeOrder.indexOf(b);
@@ -34,8 +33,7 @@ const Orders = () => {
                         Authorization: `Bearer ${localStorage.getItem('token')}`,
                     },
                 });
-                
-                // Sort available sizes in each order item
+
                 const sortedOrders = response.data.orders.map(order => ({
                     ...order,
                     items: order.items.map(item => ({
@@ -68,17 +66,17 @@ const Orders = () => {
         });
     };
 
+    const handleSnackbar = (message, severity) => {
+        setSnackbarMessage(message);
+        setSnackbarSeverity(severity);
+        setSnackbarOpen(true);
+    };
+
     const handleOptionChange = (orderId, itemId, field, value) => {
         setSelectedOptions(prevOptions => ({
             ...prevOptions,
             [`${orderId}-${itemId}-${field}`]: value,
         }));
-    };
-
-    const handleSnackbar = (message, severity) => {
-        setSnackbarMessage(message);
-        setSnackbarSeverity(severity);
-        setSnackbarOpen(true);
     };
 
     const submitUpdate = async (orderId, itemId) => {
@@ -108,6 +106,19 @@ const Orders = () => {
         }));
     };
 
+    const getStatusStyle = (status) => {
+        switch (status) {
+            case 'Failed':
+                return { color: 'red', fontWeight: 'bold' };
+            case 'Successful':
+                return { color: 'green', fontWeight: 'bold' };
+            case 'Verification Pending':
+                return { color: 'darkorange', fontWeight: 'bold' };
+            default:
+                return {};
+        }
+    };
+
     return (
         <React.Fragment>
             <Grid container>
@@ -126,21 +137,21 @@ const Orders = () => {
                             <Table>
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell>Date</TableCell>
-                                        <TableCell>Transaction ID</TableCell>
-                                        <TableCell>Amount</TableCell>
+                                        {!isMobile && <TableCell>Date</TableCell>}
+                                        {!isMobile && <TableCell>Transaction ID</TableCell>}
+                                        {!isMobile && <TableCell>Amount</TableCell>}
                                         <TableCell>Status</TableCell>
-                                        <TableCell>Actions</TableCell>
+                                        <TableCell>Action</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {orders.map(order => (
                                         <React.Fragment key={order.id}>
                                             <TableRow>
-                                                <TableCell>{new Date(order.created_at).toLocaleDateString()}</TableCell>
-                                                <TableCell>{order.transaction_id}</TableCell>
-                                                <TableCell>₹{order.total_price}</TableCell>
-                                                <TableCell>{order.payment_status}</TableCell>
+                                                {!isMobile && <TableCell>{new Date(order.created_at).toLocaleDateString()}</TableCell>}
+                                                {!isMobile && <TableCell>{order.transaction_id}</TableCell>}
+                                                {!isMobile && <TableCell>₹{order.total_price}</TableCell>}
+                                                <TableCell style={getStatusStyle(order.payment_status)}>{order.payment_status}</TableCell>
                                                 <TableCell>
                                                     <Button
                                                         variant="contained"
@@ -154,7 +165,7 @@ const Orders = () => {
                                             </TableRow>
 
                                             <TableRow>
-                                                <TableCell colSpan={5} style={{ paddingBottom: 0, paddingTop: 0 }}>
+                                                <TableCell colSpan={isMobile ? 2 : 5} style={{ paddingBottom: 0, paddingTop: 0 }}>
                                                     <Collapse in={openOrderDetails[order.id]} timeout="auto" unmountOnExit>
                                                         <Box sx={{ margin: 2, boxSizing: 'border-box' }}>
                                                             <Typography variant="h6" gutterBottom>Order Items</Typography>
@@ -170,7 +181,6 @@ const Orders = () => {
 
                                                                             {/* Conditional Dropdowns */}
                                                                             <Box display="flex" flexDirection={item.available_sizes && item.available_colors ? 'row' : 'column'} justifyContent="space-between" sx={{ marginTop: 2 }}>
-                                                                                {/* Size Selection */}
                                                                                 {item.available_sizes && item.available_sizes.length > 1 && (
                                                                                     <Select
                                                                                         value={selectedOptions[`${order.id}-${item.item_id}-size`] || item.size || ''}
@@ -184,8 +194,6 @@ const Orders = () => {
                                                                                         ))}
                                                                                     </Select>
                                                                                 )}
-
-                                                                                {/* Color Selection */}
                                                                                 {item.available_colors && item.available_colors.length > 1 && (
                                                                                     <Select
                                                                                         value={selectedOptions[`${order.id}-${item.item_id}-color`] || item.color || ''}
@@ -200,7 +208,6 @@ const Orders = () => {
                                                                                     </Select>
                                                                                 )}
                                                                             </Box>
-
                                                                             <Button
                                                                                 variant="contained"
                                                                                 sx={{ marginTop: 2, width: '100%', bgcolor: "#333", color: "#fff", '&:hover': { bgcolor: "#555" } }}
@@ -241,7 +248,6 @@ const Orders = () => {
                 </Fab>
             )}
 
-            {/* Snackbar Alert */}
             <Snackbar
                 open={snackbarOpen}
                 autoHideDuration={3000}

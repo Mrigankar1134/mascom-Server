@@ -20,17 +20,18 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
 import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
-import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
-import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline"; // Tick Icon
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import Navbar from "../Navbar";
 import ManageUsers from "./ManageUsers";
 import AddProduct from "./AddProducts";
 import ProductList from "./ProductList";
+import VerifyPayment from "./VerifyPayment"; // Import VerifyPayment component
 
 const AdminPanel = () => {
   const [selectedOption, setSelectedOption] = useState("Dashboard");
-  const { collapseSidebar } = useProSidebar(); // Hook to collapse the sidebar
+  const { toggleSidebar, collapseSidebar, broken, collapsed } = useProSidebar(); // Add `broken` for breakpoint responsiveness
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false); // Explicit control of sidebar expansion state
   const [stats, setStats] = useState({
     totalSales: 0,
     totalRevenue: 0,
@@ -46,7 +47,6 @@ const AdminPanel = () => {
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        // Fetch dashboard statistics
         const statsResponse = await fetch(
           `${process.env.REACT_APP_API_URL}/api/admin/dashboard-stats`,
           {
@@ -62,6 +62,21 @@ const AdminPanel = () => {
 
     fetchData();
   }, []);
+
+  // Handle Menu Click: Toggles the sidebar
+  const handleMenuClick = () => {
+    setIsSidebarExpanded(!isSidebarExpanded);
+    toggleSidebar(); // Ensures the ProSidebar handles internal toggling
+  };
+
+  // Handle Menu Item Click: Collapses sidebar after item selection
+  const handleMenuItemClick = (option) => {
+    setSelectedOption(option);
+    if (isSidebarExpanded) {
+      collapseSidebar();
+      setIsSidebarExpanded(false); // Update the expanded state
+    }
+  };
 
   const renderContent = () => {
     switch (selectedOption) {
@@ -105,6 +120,8 @@ const AdminPanel = () => {
         return <AddProduct />;
       case "Product List":
         return <ProductList />;
+      case "Verify Payments":
+        return <VerifyPayment />;
       default:
         return <Typography variant="h6">Select an option from the sidebar</Typography>;
     }
@@ -115,12 +132,16 @@ const AdminPanel = () => {
       <CssBaseline />
 
       {/* Sidebar */}
-      <Sidebar style={{ height: "calc(100vh-70px)", marginTop: '70px'}}>
+      <Sidebar
+        defaultCollapsed
+        collapsed={!isSidebarExpanded} // Collapse based on our explicit state
+        style={{ height: "calc(100vh - 70px)", marginTop: "70px" }}
+      >
         <Menu>
           {/* Collapse Sidebar Button */}
           <MenuItem
             icon={<MenuOutlinedIcon />}
-            onClick={() => collapseSidebar()}
+            onClick={handleMenuClick} // Toggles sidebar only when this button is clicked
             style={{ textAlign: "center" }}
           >
             <Typography variant="h6">Admin</Typography>
@@ -129,31 +150,38 @@ const AdminPanel = () => {
           {/* Sidebar Menu Items */}
           <MenuItem
             icon={<HomeOutlinedIcon />}
-            onClick={() => setSelectedOption("Dashboard")}
+            onClick={() => handleMenuItemClick("Dashboard")}
             active={selectedOption === "Dashboard"}
           >
             Dashboard
           </MenuItem>
           <MenuItem
             icon={<PeopleOutlinedIcon />}
-            onClick={() => setSelectedOption("Users")}
+            onClick={() => handleMenuItemClick("Users")}
             active={selectedOption === "Users"}
           >
             Manage Users
           </MenuItem>
           <MenuItem
             icon={<ContactsOutlinedIcon />}
-            onClick={() => setSelectedOption("Add Item")}
+            onClick={() => handleMenuItemClick("Add Item")}
             active={selectedOption === "Add Item"}
           >
             Add Item
           </MenuItem>
           <MenuItem
             icon={<ReceiptOutlinedIcon />}
-            onClick={() => setSelectedOption("Product List")}
+            onClick={() => handleMenuItemClick("Product List")}
             active={selectedOption === "Product List"}
           >
             Product List
+          </MenuItem>
+          <MenuItem
+            icon={<CheckCircleOutlineIcon />}
+            onClick={() => handleMenuItemClick("Verify Payments")}
+            active={selectedOption === "Verify Payments"}
+          >
+            Verify Payments
           </MenuItem>
         </Menu>
       </Sidebar>
@@ -162,7 +190,7 @@ const AdminPanel = () => {
       <Box
         sx={{
           flexGrow: 1,
-          padding: "20px", // Add margin to prevent overlap
+          padding: "20px",
           overflowX: "hidden",
         }}
       >
